@@ -1,13 +1,12 @@
 {{ config(
-     enabled = var('data_quality_enabled',var('claims_enabled',var('tuva_marts_enabled',False))) | as_bool
-   )
-}}
+     enabled = (var('enable_legacy_data_quality', False) and var('claims_enabled', var('tuva_marts_enabled', False))) | as_bool
+)}}
 
 with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -26,7 +25,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -45,7 +44,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -64,7 +63,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -83,7 +82,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -102,7 +101,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (
@@ -121,7 +120,7 @@ with date_stage as(
 
     select
         date_field
-        , {{ dbt.concat(["year", dbt.right(dbt.concat(["'0'", "month"]), 2)]) }} as year_month
+        , {{ concat_custom(["year", dbt.right(concat_custom(["'0'", "month"]), 2)]) }} as year_month
         , result_count
     from
     (

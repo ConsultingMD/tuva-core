@@ -236,7 +236,7 @@ seeds:
         rbcs_subcat_desc: |
           {%- if target.type in ("bigquery", "databricks") -%} string {%- else -%} varchar(256) {%- endif -%}
         rbcs_famnumb: |
-          {%- if target.type in ("bigquery", "databricks") -%} numeric {%- elif target.type == "athena" -%} int {%- else -%} numeric {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} numeric {%- elif target.type in ("athena") -%} int {%- else -%} numeric {%- endif -%}
         rbcs_family_desc: |
           {%- if target.type in ("bigquery", "databricks") -%} string {%- else -%} varchar(256) {%- endif -%}
         rbcs_major_ind: |
@@ -248,13 +248,13 @@ seeds:
         rbcs_assignment_eff_dt: |
           {%- if target.type in ("bigquery", "databricks") -%} date {%- else -%} date {%- endif -%}
         current_flag: |
-          {%- if target.type in ("bigquery", "databricks") -%} numeric {%- elif target.type == "athena" -%} int {%- else -%} numeric {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} numeric {%- elif target.type in ("athena") -%} int {%- else -%} numeric {%- endif -%}
     columns:
       - name: hcpcs_cd
         description: HCPCS or CPT code.
       - name: rbcs_id
         description: |
-          RBCS identifier which is comprised of 6 characters. The first 
+          RBCS identifier which is comprised of 6 characters. The first
           character identifies the category; the second character identifies
           the subcategory; the third, fourth, and fifth characters identify
           the family, and the sixth character identifies whether the service
@@ -336,6 +336,7 @@ seeds:
         description: 'The long description of the ICD-9-PCS code.'
       - name: short_description
         description: 'The short description of the ICD-9-PCS code.'
+
 
   - name: terminology__icd_10_cm
     description: 'Seed containing ICD-10-CM codes and descriptions.'
@@ -615,13 +616,13 @@ seeds:
         ms_drg_title: |
           {%- if target.type in ("bigquery", "databricks") -%} string {%- else -%} varchar(256) {%- endif -%}
         drg_weight_raw: |
-          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type == "athena" -%} real {%- else -%} numeric(18,4) {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type in ("athena") -%} real {%- else -%} numeric(18,4) {%- endif -%}
         drg_weight: |
-          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type == "athena" -%} real {%- else -%} numeric(18,4) {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type in ("athena") -%} real {%- else -%} numeric(18,4) {%- endif -%}
         geometric_mean_los: |
-          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type == "athena" -%} real {%- else -%} numeric(18,4) {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type in ("athena") -%} real {%- else -%} numeric(18,2) {%- endif -%}
         arithmetic_mean_los: |
-          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type == "athena" -%} real {%- else -%} numeric(18,4) {%- endif -%}
+          {%- if target.type in ("bigquery", "databricks") -%} float {%- elif target.type in ("athena") -%} real {%- else -%} numeric(18,2) {%- endif -%}
     columns:
       - name: ms_drg
         description: 'The Medicare Severity Diagnosis Related Group (MS-DRG) code.'
@@ -974,6 +975,7 @@ seeds:
       - name: atc_4_name
         description: 'The name of the ATC level 4 code.'
 
+
   - name: terminology__snomed_icd_10_map
     description: 'Seed containing mappings between SNOMED CT and ICD-10 codes.'
     config:
@@ -1079,6 +1081,7 @@ seeds:
       - name: last_updated
         description: 'The date when the SNOMED CT code was last updated.'
 
+
   - name: terminology__snomed_ct_transitive_closures
     description: 'Seed containing SNOMED CT transitive closures.'
     config:
@@ -1105,6 +1108,7 @@ seeds:
         description: 'The SNOMED code of the child concept.'
       - name: child_description
         description: 'The description of the child SNOMED concept.'
+
 
   - name: terminology__rxnorm_brand_generic
     config:
