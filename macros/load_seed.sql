@@ -119,6 +119,7 @@ copy  {{ this }}
         {% set table_name = this.schema ~ '.' ~  this.name %}
         {% set tmp_table = this.schema ~ '.' ~  this.name ~ "__dbt_tmp_external" %}
         {% set header_line_count %}{% if headers -%}1{%- else -%}0{%- endif -%}{% endset %}
+        {% set tbl_location = target.s3_staging_dir ~ '/' ~ this.schema ~ '/' ~ this.name ~ '/' ~ run_started_at.strftime("%Y%m%d%H%M%S") ~ '/' %}
 
         {% set drop_tmp_table %}
             DROP TABLE IF EXISTS `{{ tmp_table }}`;
@@ -137,7 +138,13 @@ copy  {{ this }}
         {% endset %}
 
         {% set create_seed_table %}
-            CREATE TABLE {{ table_name }} AS
+            CREATE TABLE {{ table_name }}
+            WITH (
+              table_type = 'hive',
+              format = 'parquet',
+              external_location = '{{ tbl_location }}'
+            )
+            AS
                 SELECT
                 {% for col in columns %}
                     cast(nullif({{ col.name }},'{{ null_char }}') as {{ dml_data_type(col.dtype) }}) as {{ col.name }} {%-if not loop.last -%},{%- endif %}
