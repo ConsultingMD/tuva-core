@@ -35,6 +35,7 @@
     from
         read_csv('s3://{{ uri }}/{{ pattern }}*',
         {% if null_marker == true %} nullstr = '\N' {% else %} nullstr = '' {% endif %},
+         quote = '"', escape = '"',
          header=true,
          columns= { {{ cols }} } )
 
@@ -44,10 +45,19 @@
 {{ sql }}
 {% endcall %}
 
+{% set count_sql %}
+  SELECT COUNT(*) AS row_count FROM {{ this }}
+{% endset %}
+
+{% call statement('count',fetch_result=true) %}
+  {{ count_sql }}
+{% endcall %}
+
 {% if execute %}
 {# debugging { log(sql, True)} #}
-{% set results = load_result('ducksql') %}
-{{ log("Loaded data from external s3 resource\n  loaded to: " ~ this ~ "\n  from: s3://" ~ uri ,True) }}
+{% set count_result = load_result('count') %}
+{% set row_count = count_result.table.columns[0].values()[0] if count_result.table else 0 %}
+{{ log("Loaded data from external s3 resource\n  loaded to: " ~ this ~ "\n  from: s3://" ~ uri ~ "/" ~ pattern ~ "*\n  rows: " ~ row_count,True) }}
 {# debugging { log(results, True) } #}
 {% endif %}
 
@@ -109,6 +119,7 @@ copy  {{ this }}
         {% set table_name = this.schema ~ '.' ~  this.name %}
         {% set tmp_table = this.schema ~ '.' ~  this.name ~ "__dbt_tmp_external" %}
         {% set header_line_count %}{% if headers -%}1{%- else -%}0{%- endif -%}{% endset %}
+        {% set tbl_location = target.s3_staging_dir ~ '/' ~ this.schema ~ '/' ~ this.name ~ '/' ~ run_started_at.strftime("%Y%m%d%H%M%S") ~ '/' %}
 
         {% set drop_tmp_table %}
             DROP TABLE IF EXISTS `{{ tmp_table }}`;
@@ -127,7 +138,13 @@ copy  {{ this }}
         {% endset %}
 
         {% set create_seed_table %}
-            CREATE TABLE {{ table_name }} AS
+            CREATE TABLE {{ table_name }}
+            WITH (
+              table_type = 'hive',
+              format = 'parquet',
+              external_location = '{{ tbl_location }}'
+            )
+            AS
                 SELECT
                 {% for col in columns %}
                     cast(nullif({{ col.name }},'{{ null_char }}') as {{ dml_data_type(col.dtype) }}) as {{ col.name }} {%-if not loop.last -%},{%- endif %}
