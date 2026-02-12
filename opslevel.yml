@@ -1,0 +1,12 @@
+version: 1
+name: ConsultingMD/tuva-core
+description: Healthcare analytics data transformation project using dbt. Provides core data models, data marts, terminology sets, and data quality tests for healthcare analytics.
+language: sql
+repositories:
+- name: ConsultingMD/tuva-core
+  path: /
+  provider: github
+- name: ConsultingMD/tuva-core
+  path: /platform
+  provider: github
+  display_name: Platform Folder
