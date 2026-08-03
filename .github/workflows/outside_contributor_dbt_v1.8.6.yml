@@ -1053,22 +1053,37 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Post comment on PR
+        env:
+          SQLFLUFF_LINT_RESULT: ${{ needs.sqlfluff-lint.result }}
+          BIGQUERY_CLINICAL_AND_CLAIMS_ENABLED_RESULT: ${{ needs.bigquery_clinical_and_claims_enabled.result }}
+          BIGQUERY_CLAIMS_ENABLED_RESULT: ${{ needs.bigquery_claims_enabled.result }}
+          BIGQUERY_CLINICAL_ENABLED_RESULT: ${{ needs.bigquery_clinical_enabled.result }}
+          FABRIC_CLINICAL_AND_CLAIMS_ENABLED_RESULT: ${{ needs.fabric_clinical_and_claims_enabled.result }}
+          FABRIC_CLAIMS_ENABLED_RESULT: ${{ needs.fabric_claims_enabled.result }}
+          FABRIC_CLINICAL_ENABLED_RESULT: ${{ needs.fabric_clinical_enabled.result }}
+          REDSHIFT_CLINICAL_AND_CLAIMS_ENABLED_RESULT: ${{ needs.redshift_clinical_and_claims_enabled.result }}
+          REDSHIFT_CLAIMS_ENABLED_RESULT: ${{ needs.redshift_claims_enabled.result }}
+          REDSHIFT_CLINICAL_ENABLED_RESULT: ${{ needs.redshift_clinical_enabled.result }}
+          SNOWFLAKE_CLINICAL_AND_CLAIMS_ENABLED_RESULT: ${{ needs.snowflake_clinical_and_claims_enabled.result }}
+          SNOWFLAKE_CLAIMS_ENABLED_RESULT: ${{ needs.snowflake_claims_enabled.result }}
+          SNOWFLAKE_CLINICAL_ENABLED_RESULT: ${{ needs.snowflake_clinical_enabled.result }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.inputs.prNumber }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_COMMENT="Workflow has finished with the following statuses:
-          <ul><li>Linter: ${{ needs.sqlfluff-lint.result }}</li></ul>
-          <ul><li>BigQuery Clinical and Claims: ${{ needs.bigquery_clinical_and_claims_enabled.result }}</li></ul>
-          <ul><li>BigQuery Claims: ${{ needs.bigquery_claims_enabled.result }}</li></ul>
-          <ul><li>BigQuery Clinical: ${{ needs.bigquery_clinical_enabled.result }}</li></ul>
-          <ul><li>Fabric Clinical and Claims: ${{ needs.fabric_clinical_and_claims_enabled.result }}</li></ul>
-          <ul><li>Fabric Claims: ${{ needs.fabric_claims_enabled.result }}</li></ul>
-          <ul><li>Fabric Clinical: ${{ needs.fabric_clinical_enabled.result }}</li></ul>
-          <ul><li>Redshift Clinical and Claims: ${{ needs.redshift_clinical_and_claims_enabled.result }}</li></ul>
-          <ul><li>Redshift Claims: ${{ needs.redshift_claims_enabled.result }}</li></ul>
-          <ul><li>Redshift Clinical: ${{ needs.redshift_clinical_enabled.result }}</li></ul>
-          <ul><li>Snowflake Clinical and Claims: ${{ needs.snowflake_clinical_and_claims_enabled.result }}</li></ul>
-          <ul><li>Snowflake Claims: ${{ needs.snowflake_claims_enabled.result }}</li></ul>
-          <ul><li>Snowflake Clinical: ${{ needs.snowflake_clinical_enabled.result }}</li></ul>"
-          PR_ID=$(gh pr view https://github.com/${{ github.repository }}/pull/${{ github.event.inputs.prNumber }} --json number -q .number)
-          gh pr comment $PR_ID --body "$PR_COMMENT"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          <ul><li>Linter: $SQLFLUFF_LINT_RESULT</li></ul>
+          <ul><li>BigQuery Clinical and Claims: $BIGQUERY_CLINICAL_AND_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>BigQuery Claims: $BIGQUERY_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>BigQuery Clinical: $BIGQUERY_CLINICAL_ENABLED_RESULT</li></ul>
+          <ul><li>Fabric Clinical and Claims: $FABRIC_CLINICAL_AND_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Fabric Claims: $FABRIC_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Fabric Clinical: $FABRIC_CLINICAL_ENABLED_RESULT</li></ul>
+          <ul><li>Redshift Clinical and Claims: $REDSHIFT_CLINICAL_AND_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Redshift Claims: $REDSHIFT_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Redshift Clinical: $REDSHIFT_CLINICAL_ENABLED_RESULT</li></ul>
+          <ul><li>Snowflake Clinical and Claims: $SNOWFLAKE_CLINICAL_AND_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Snowflake Claims: $SNOWFLAKE_CLAIMS_ENABLED_RESULT</li></ul>
+          <ul><li>Snowflake Clinical: $SNOWFLAKE_CLINICAL_ENABLED_RESULT</li></ul>"
+          PR_ID=$(gh pr view "https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER" --json number -q .number)
+          gh pr comment "$PR_ID" --body "$PR_COMMENT"
